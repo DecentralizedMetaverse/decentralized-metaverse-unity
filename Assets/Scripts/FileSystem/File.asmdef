@@ -1,0 +1,26 @@
+{
+    "name": "FileSystem",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b7e6fd867a25f7c43b601be4d7772245",
+        "GUID:05dd262a0c0a2f841b8252c8c3815582",
+        "GUID:8d76e605759c3f64a957d63ef96ada7c",
+        "GUID:da3e51d19d51a544fa14d43fee843098",
+        "GUID:a8e4a462662564e48931da8e2a390e60",
+        "GUID:0eadcadee644f4e4cb96f0c11df10d89",
+        "GUID:88add5074929f6142b44e60e814e3f31",
+        "GUID:30817c1a0e6d646d99c048fc403f5979",
+        "GUID:2e0571f73dea62242b598f00484385be",
+        "GUID:3ca30c90271c70d4792c28c0fe21f1a7",
+        "GUID:774f0e7b520e24644b448f5ac7fa5d94"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

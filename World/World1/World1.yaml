@@ -1,0 +1,18 @@
+version: 1.0.0
+updated: 2022-11-25-19-15
+type: world
+id: a55758ea31cd6770c449346dd8d13aa
+name: World1
+objects:  
+  0001:
+    file: 'fog.png'
+    type: image
+    position: "-5,5,20"
+    rotation: "0,0,0"
+    scale: "10,10,10"
+    move: false
+    gravity: false
+    parent: ''
+    child: ''
+    custom: ''  
+...

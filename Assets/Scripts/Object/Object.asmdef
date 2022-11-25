@@ -1,0 +1,17 @@
+{
+    "name": "Object",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b7e6fd867a25f7c43b601be4d7772245",
+        "GUID:62fdcbeb2d4e4d949a93a234c2d9a937"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
