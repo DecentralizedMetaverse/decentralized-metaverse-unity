@@ -1,24 +1,14 @@
-## このプロジェクトについて
-多人数接続が可能なメタバースです。
+## Decentralized Metaverse Project
+This project creates a decentralized metaverse.
 
-アバターはVRMファイルを読み込みます。
-
-ワールドにおいては、画像、動画等をランタイムで読み込むことができます。
-
-また、スクリプトを記述して、メッセージや選択肢を表示することも可能です。
-
-## 必要なアセット
-ご使用の際は、以下のアセットをインポートしてください。
+## Required Assets
+Please import the following assets.
 - [Mirror](https://assetstore.unity.com/packages/tools/network/mirror-129321)
 - [Runtime OBJ Importer](https://assetstore.unity.com/packages/tools/modeling/runtime-obj-importer-49547)
 
-## 使用アセット
-- [UniVRM](https://github.com/vrm-c/UniVRM)
-
-
-## ワールド設定例
-./World/ワールド名
-ワールド名.yaml
+## How to set up a world
+./World/`world name`
+`world name`.yaml
 ```yaml
 version: 1.0.0
 updated: 2022-11-25-19-15
@@ -38,27 +28,30 @@ objects:
     child: ''
     custom: ''  
 ```
-parentにidを入れることで親子関係の設定が可能
+Parent-child relationship can be set by setting the id at parent.
 
-## 読み込み可能なファイル
-| 種類 | type |
+## Available file types
+| type | tag |
 | --- | --- |
 | png, jpg | image |
 | mp4 | video |
 | mp3 | audio |
 | glb | object |
 | ys | script |
-| 空のオブジェクト | empty |
-| 他のワールド | world |
 
-## スクリプト
-./World/ワールド名/スクリプト名.ys
+| type | tag |
+| --- | --- |
+| empty object | empty |
+| other world | world |
 
-### ワールド設定例
+## Script
+./World/`world name`/`script name`.ys
+
+### Examples
 ```yaml
 ~~~省略~~~
   0002:
-    file: 'スクリプト名.ys'
+    file: '<script name>.ys'
     type: script
     position: "0,0,-0"
     rotation: "0,0,0"
@@ -71,7 +64,7 @@ parentにidを入れることで親子関係の設定が可能
 ~~~省略~~~
 ```
 
-### メッセージ表示
+### Message indication
 
 ```jsx
 say "Hello!"
@@ -80,25 +73,24 @@ say "Name" "Hello!"
 say "Name" "Hello!+Where are you from?"
 ```
 
-### 変数
+### Variable
 
 ```jsx
-// 文字列型変数
+// String
 name = "村人A"
 
-// 整数型変数
+// Integer
 money = 100
 
-// 論理型変数
+// Boolean
 flagA
 flagA = true
 flagA = false
 ```
 
-### 条件分岐
+### Conditional branch
 
 ```jsx
-// 条件分岐
 //==, <, >, <=, >=, and, or
 if flagA
     say "村人A" "これあげる！"
@@ -115,10 +107,9 @@ end
 
 ```
 
-### 選択肢
+### Choice indication
 
 ```jsx
-// 条件分岐
 yesno
 select "title" : "A" "B"
 //or select "A" "B"
@@ -131,13 +122,13 @@ else if ret == 2
 end
 ```
 
-### テキスト表示
+### Text indication
 ```jsx
 title "maintitle" "subtitle"
 msg "text"
 ```
 
-### 時間制御
+### Time Control
 
 ```jsx
 
@@ -146,20 +137,18 @@ msg "text"
 wait 2.6
 ```
 
-### オブジェクト表示・非表示機能
+### Object active/inactive
 ```jsx
-// オブジェクト表示・非表示
 active <id> <true or false>
 
-// オブジェクトが表示されているか
 is_active <id>
-if ret == 0
-   // 非表示になっている
+if ret == 1
+   // active
 else
-   // 表示している
+   // inactive
 end
 ```
-使用例
+**Examples**
 ```jsx
 is_active 330699wfe556wefaw6224e854fb1
 if ret == 0
@@ -169,8 +158,8 @@ else
 end
 ```
 
-### オブジェクト親子関係の設定
-子オブジェクトは、親オブジェクトの相対座標になります
+### Setting up object parent-child relationships
+The child object will be relative to the parent object
 ```yaml
   330699wfe5566224ede8854fb1:
     file: logo3.png
