@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using TC;
 
-public class PlayerAvatarDownloader : NetworkBehaviour, GM_Msg
+public class PlayerAvatarDownloader : NetworkBehaviour
 {
     [SerializeField] GameObject loadingScreen;
     [SyncVar] string avatarName;
@@ -26,20 +27,13 @@ public class PlayerAvatarDownloader : NetworkBehaviour, GM_Msg
             GM.Msg("avatar.load", avatarName, identity.netId); //アバター読み込み
             return;
         }
-        GM.Add("avatar.change", this);
-        GM.Add("avatar.download", this);
-    }
+        GM.Add<string>("ChangeAvatar", ChangeAvatar);
+        GM.Add("DownloadAvatar", DownloadAvatar);
+    }    
 
-    void GM_Msg.Receive(string data1, params object[] data2)
+    void DownloadAvatar()
     {
-        if(data1 == "avatar.change")
-        {
-            ChangeAvatar((string)data2[0]);
-        }
-        else if(data1 == "avatar.download")
-        {
-            RequestAvatar(identity.connectionToClient);
-        }
+        RequestAvatar(identity.connectionToClient);
     }
 
     [Command]

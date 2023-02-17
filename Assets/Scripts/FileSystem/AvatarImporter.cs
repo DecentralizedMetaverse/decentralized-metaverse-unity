@@ -5,26 +5,26 @@ using VRM;
 using UniGLTF;
 using System;
 using System.IO;
+using TC.Player;
+using TC;
 
-public class AvatarImporter : MonoBehaviour, GM_Msg
+public class AvatarImporter : MonoBehaviour
 {
     [SerializeField] DB_User dbUser;
     [SerializeField] Shader shader;
     [SerializeField] RuntimeAnimatorController controller;
     string avatarPath;
-    void Awake()
+    
+    void Start()
     {
-        GM.Add("avatar.load", this);// idが0の場合は自身をロードする時
+        GM.Add<string, bool, uint>("LoadAvatar", LoadAvatar);// idが0の場合は自身をロードする時
         avatarPath = $"{Application.dataPath}/../Avatar";
     }
-
-    void GM_Msg.Receive(string data1, params object[] data2)
+    
+    void LoadAvatar(string avatarId, bool isLocal, uint uid)
     {
-        if (data2[1].ToString() == "local")
-        {
-            GetAvatar((string)data2[0], GM.id, true);
-        }
-        else GetAvatar((string)data2[0], (uint)data2[1], false);
+        //var id = isLocal ? GM.id : uid;
+        //GetAvatar(avatarId, id, isLocal);
     }
 
     /// <summary>
@@ -53,7 +53,8 @@ public class AvatarImporter : MonoBehaviour, GM_Msg
         }
 
         var parentObject = GameObject.FindWithTag("Player");
-        parentObject.GetComponent<PlayerControllerF>().animator = anim;
+        // TODO: Animatorの追加
+        //parentObject.GetComponent<Controller>().animator = anim;
         GM.Msg("player.loaded", obj.transform);
         GM.Msg($"avatar.object.local", obj);
         GM.Msg("avatar.change", avatarName);

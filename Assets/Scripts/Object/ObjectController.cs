@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TC;
 using UnityEngine;
 
 public class ObjectController : MonoBehaviour
@@ -30,7 +31,8 @@ public class ObjectController : MonoBehaviour
             HoldingHundle();            
         }
         
-        if (InputF.GetButtonDown(eInputMap.data.Submit)) OnClick();
+        // TODO: クリック時の処理作成
+        //if (InputF.action.Game.Submit) OnClick();
 
         bool isHit = IsHittingObject(); //オブジェクトにレイが当たっているかどうか
         if (isHit != stateEnter && !isGrabbing)
@@ -51,13 +53,13 @@ public class ObjectController : MonoBehaviour
     void HoldingHundle()
     {
         //オブジェクトの回転
-        var x = InputF.GetAxis(eInputMap.data.Vertical2);
-        var y = InputF.GetAxis(eInputMap.data.Horizontal2);
-        grabbingObj.Rotate(x, y, 0);
+        //var x = InputF.GetAxis(eInputMap.data.Vertical2);
+        //var y = InputF.GetAxis(eInputMap.data.Horizontal2);
+        //grabbingObj.Rotate(x, y, 0);
 
         //オブジェクトの距離の変更
-        var d = InputF.GetAxis(eInputMap.data.Scroll);
-        grabbingObj.position = Vector3.LerpUnclamped(grabbingObj.position, mainCamera.position, -d);
+        //var d = InputF.GetAxis(eInputMap.data.Scroll);
+        //grabbingObj.position = Vector3.LerpUnclamped(grabbingObj.position, mainCamera.position, -d);
     }
 
     /// <summary>

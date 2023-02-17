@@ -3,24 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Mirror;
+using TC;
 
-public class NetMessageManager : NetworkBehaviour, GM_Msg
+public class NetMessageManager : NetworkBehaviour
 {
     void Awake()
-    {        
-        GM.Add("send", this);
-    }
-
-    void GM_Msg.Receive(string data1, params object[] data2)
     {
-        var data = string.Join("#", data2);
-        SendServerMessage(data);
-    }
+        GM.Add<string[]>("send", SendServerMessage);
+    }    
 
     [Command(requiresAuthority = false)]
-    void SendServerMessage(string data)
+    void SendServerMessage(string[] messages)
     {
-        SendClientMessage(data);
+        var message = string.Join("#", messages);
+        SendClientMessage(message);
     }
 
     [ClientRpc]

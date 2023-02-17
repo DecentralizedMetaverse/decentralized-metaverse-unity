@@ -6,6 +6,7 @@ using Mirror;
 using YamlDotNet.RepresentationModel;
 using System.IO;
 using System;
+using TC;
 
 [RequireComponent(typeof(CustomNetworkManager))]
 public class NetManager : MonoBehaviour

@@ -1,73 +1,79 @@
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
+using TC;
 using UnityEngine;
-using Mirror;
+using UnityEngine.InputSystem;
 
 public class PlayerTrigger : MonoBehaviour
 {
-    [SerializeField] NetworkIdentity identity;
+    protected List<GameObject> runnableObjs = new List<GameObject>();
+    protected List<ExeEvent> exeEvents = new List<ExeEvent>();
 
-    List<GameObject> obj2 = new List<GameObject>();
-    List<ExeEvent> exeEvent = new List<ExeEvent>();
 
-    private void Update()
+    private void Start()
     {
-        if (GM.id != identity.netId) return;
+        InputF.action.Game.Submit.performed += OnSubmit;
+    }
 
+    void Update()
+    {
+        CheckNullRunnableObj();
+    }
+
+    private void CheckNullRunnableObj()
+    {
+        if (runnableObjs.Count == 0) return;
+        if (runnableObjs[0] != null) return;
+
+        //イベント実行によりゲームオブジェクトが消えた場合
+        runnableObjs.RemoveAt(0);
+        exeEvents.RemoveAt(0);
+
+        ShowHintHandler();
+    }
+
+    /// <summary>
+    /// 決定キーを押したときの処理
+    /// </summary>
+    /// <param name="contex"></param>
+    void OnSubmit(InputAction.CallbackContext contex)
+    {
         if (GM.pause == ePause.mode.GameStop) return;
+        if (runnableObjs.Count == 0) return;
 
-        if (obj2.Count == 0) return;
-
-        if (obj2[0] == null)
-        {
-            //イベント実行によりゲームオブジェクトが消えた場合
-            obj2.RemoveAt(0);
-            exeEvent.RemoveAt(0);
-
-            if (obj2.Count == 0)
-            {
-                GM.Msg("Hint", false);
-                return;
-            }
-            else
-            {
-                GM.Msg("Hint", true, exeEvent[0].GetHint());
-            }
-        }
-
-        if (InputF.GetButtonDown(eInputMap.data.Submit2))
-        {
-            exeEvent[0].Exe(transform.position);
-        }
+        exeEvents[0].SubmitRun(transform.position);
     }
 
-    void OnTriggerEnter(Collider other)
+    protected void AddRunnableObj(GameObject obj)
     {
-        if (GM.id != identity.netId) return;
-        if (other.tag != "Event") return;
-
-        var exe = other.GetComponent<ExeEvent>();
-        obj2.Add(other.gameObject);
-        exeEvent.Add(exe);
-
-        GM.Msg("Hint", true, exeEvent[0].GetHint());
+        var exe = obj.GetComponent<ExeEvent>();
+        EnterRun(exe).Forget();
+        runnableObjs.Add(obj);
+        exeEvents.Add(exe);
     }
 
-    void OnTriggerExit(Collider other)
+    async UniTask EnterRun(ExeEvent exe)
     {
-        if (GM.id != identity.netId) return;
-        if (other.tag != "Event") return;
+        await UniTask.WaitWhile(() => (GM.pause == ePause.mode.GameStop));
+        exe.EnterRun();
+    }
 
-        obj2.Remove(other.gameObject);
-        exeEvent.Remove(other.GetComponent<ExeEvent>());
+    protected void RemoveRunnableObj(GameObject obj)
+    {
+        runnableObjs.Remove(obj);
+        exeEvents.Remove(obj.GetComponent<ExeEvent>());
+    }
 
-        if (obj2.Count == 0)
+    protected void ShowHintHandler()
+    {
+        if (runnableObjs.Count == 0)
         {
-            GM.Msg("Hint", false);
+            GM.Msg("Hint", "", false);
         }
         else
         {
-            GM.Msg("Hint", true, exeEvent[0].GetHint());
+            GM.Msg("Hint", exeEvents[0].GetHint(), true);
         }
     }
 }

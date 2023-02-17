@@ -9,7 +9,7 @@ public class NetTransform : MonoBehaviour, GM_Msg
 
     public void SetID(string id)
     {
-        GM.Add(id, this);
+        //GM.Add(id, this);
     }
 
     void Update()

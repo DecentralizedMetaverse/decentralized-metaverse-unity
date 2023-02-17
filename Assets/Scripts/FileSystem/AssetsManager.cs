@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.IO.Compression;
-using Dummiesman;
+//using Dummiesman;
 using YamlDotNet.RepresentationModel;
 using System;
 using UniGLTF;
-using Siccity.GLTFUtility;
+using Cysharp.Threading.Tasks;
+using TC;
 
 public class AssetsManager : MonoBehaviour, GM_Msg
 {
@@ -22,7 +23,7 @@ public class AssetsManager : MonoBehaviour, GM_Msg
 
     string path = "";
     Dictionary<string, string> worldPath = new Dictionary<string, string>();
-    OBJLoader loader = new OBJLoader();
+    //OBJLoader loader = new OBJLoader();
     const int moveLayer = 6;
 
     /// <summary>
@@ -62,12 +63,12 @@ public class AssetsManager : MonoBehaviour, GM_Msg
         path = Application.dataPath + "/../World";
         if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
-        GM.Add("world.load", this);
-        GM.Add("world.request", this);
-        GM.Add("world.check", this);
-        GM.Add("object.set", this);
-        GM.Add("object.active", this);
-        GM.Add("object.is_active", this);
+        //GM.Add("world.load", this);
+        //GM.Add("world.request", this);
+        //GM.Add("world.check", this);
+        //GM.Add("object.set", this);
+        //GM.Add("object.active", this);
+        //GM.Add("object.is_active", this);
     }
 
     void GM_Msg.Receive(string data1, params object[] data2)
@@ -103,7 +104,7 @@ public class AssetsManager : MonoBehaviour, GM_Msg
             var worldPath = path + (string)data2[1];
             ZipFile.CreateFromDirectory(worldPath, $"{worldPath}.zip");
             byte[] byteData = fg.ConvertToByte(worldPath);
-            GM.Msg("send", "world.receive", (string)data2[0], (string)data2[1], byteData);
+            //GM.Msg("send", "world.receive", (string)data2[0], (string)data2[1], byteData);
         }
         else if (data1 == "world.receive")
         {
@@ -374,11 +375,11 @@ public class AssetsManager : MonoBehaviour, GM_Msg
         var extension = Path.GetExtension(metaData.file);
         if (extension == ".obj")
         {
-            obj = loader.Load(pathObj);
+            //obj = loader.Load(pathObj);
         }
         else if (extension == ".glb")
         {
-            obj = Importer.LoadFromFile(pathObj);
+            //obj = Importer.LoadFromFile(pathObj);
             //obj = LoadGltf(pathObj);
         }
 
@@ -461,7 +462,7 @@ public class AssetsManager : MonoBehaviour, GM_Msg
 
         //スクリプト内容
         var txt = File.ReadAllText($"{worldPath[objectId]}/{metaData.file}");
-        exe.scriptContent = txt;
+        exe.luaScript = new TextAsset(txt);
         exe.hintText = data.hint;
 
         //実行方法
@@ -471,18 +472,13 @@ public class AssetsManager : MonoBehaviour, GM_Msg
         else if (data.exe == "start")
         {
             exe.type = eYScript.exeType.none;
-            StartCoroutine(ExeSciprt(exe));
+            // StartCoroutine(ExeSciprt(exe));
+            GM.MsgAsync("Run", exe.luaScript.text).Forget();
         }
 
         obj.transform.SetParent(transform);
         SetGameObject(objectId, metaData, obj);
-    }
-
-    IEnumerator ExeSciprt(EventObject exe)
-    {
-        yield return null;
-        exe.Exe();
-    }
+    }    
 
     void SetGameObject(string objectId, MetaDataObject metaData, GameObject obj)
     {

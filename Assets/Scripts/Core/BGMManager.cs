@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using TC;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 [RequireComponent(typeof(AudioSource))]
-public class BGMManager : MonoBehaviour, GM_Msg
+public class BGMManager : MonoBehaviour
 {
     [SerializeField] DB_Settings db;
 
@@ -15,17 +16,12 @@ public class BGMManager : MonoBehaviour, GM_Msg
     void Awake()
     {
         source = GetComponent<AudioSource>();
-        GM.Add("bgm", this);
-    }
-
-    void GM_Msg.Receive(string data1, params object[] data2)
-    {
-        ChangeBGM(data2[0].ToString());
-    }
+        GM.Add<string>("PlayBGM", ChangeBGM);
+    }    
 
     public void ChangeBGM(string bgmName)
     {
-        if (SM.dbScene.bgmOff) return;
+        if (GM.db.bgmOff) return;
         if (bgmName == "stop")
         {
             nextAudio = null;

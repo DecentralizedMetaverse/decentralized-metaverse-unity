@@ -385,11 +385,11 @@ public class NetAnimation : NetworkBehaviour
     /// <param name="writer"></param>
     /// <param name="initialState"></param>
     /// <returns></returns>
-    public override bool OnSerialize(NetworkWriter writer, bool initialState)
+    public override void OnSerialize(NetworkWriter writer, bool initialState)
     {
-        if (animator == null) return false;
+        if (animator == null) return ;
 
-        bool changed = base.OnSerialize(writer, initialState);
+        base.OnSerialize(writer, initialState);
         if (initialState)
         {
             for (int i = 0; i < animator.layerCount; i++)
@@ -409,9 +409,9 @@ public class NetAnimation : NetworkBehaviour
                 writer.WriteFloat(animator.GetLayerWeight(i));
             }
             WriteParameters(writer, initialState);
-            return true;
+            return;
         }
-        return changed;
+        return;
     }
 
     /// <summary>

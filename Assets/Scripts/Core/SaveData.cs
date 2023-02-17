@@ -20,7 +20,7 @@ public class SaveData : MonoBehaviour, GM_Msg
     void Start()
     {
         path = Application.persistentDataPath + "/save.dat";
-        GM.Add("save", this);
+        //GM.Add("save", this);
         //GM.Msg("player.mng");
     }
 

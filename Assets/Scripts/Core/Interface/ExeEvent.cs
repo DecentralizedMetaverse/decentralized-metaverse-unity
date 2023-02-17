@@ -5,8 +5,10 @@ using UnityEngine;
 public interface ExeEvent
 {
     string GetHint();
-    void Exe(Vector3 vec);
+    void SubmitRun(Vector3 vec);
+    void EnterRun();
 }
+
 public interface Damage
 {
     void Damage(int id, int point, Vector3 vec);

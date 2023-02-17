@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
+using TC;
 
-public class PlayerNameTag : NetworkBehaviour, GM_Msg
+public class PlayerNameTag : NetworkBehaviour
 {
     [SerializeField] DB_User dbUser;
     [SerializeField] Text textName;
@@ -14,13 +15,8 @@ public class PlayerNameTag : NetworkBehaviour, GM_Msg
     {
         textName.text = playerName;
         if (!isLocalPlayer) return;
-        GM.Add("player.name", this);
-    }
-
-    void GM_Msg.Receive(string data1, params object[] data2)
-    {
-        ChangeName((string)data2[0]);
-    }
+        GM.Add<string>("ChangeName", ChangeName);
+    }    
 
     [Command]
     public void ChangeName(string name)

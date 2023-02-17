@@ -2,33 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using TC;
 
-public class AvatarManager : NetworkBehaviour, GM_Msg
+public class AvatarManager : NetworkBehaviour
 {
     GameObject player;
 
     void Start()
     {
-        if (!isLocalPlayer)
-        {
-            GM.Add($"avatar.object.{netId}", this);
-        }
-        else
-        {
-            GM.id = netId;
-            GM.Add($"avatar.object.local", this);
-            transform.GetChild(2).tag = "Trigger";
-        }
-    }
+        GM.Add<string>("LoadAvatar", LoadAvatar);
+    }   
 
-    void GM_Msg.Receive(string data1, params object[] data2)
+    void LoadAvatar(string id)
     {
-        if(player != null) Destroy(player);
-        player = data2[0] as GameObject;
-        player.transform.SetParent(transform);
-        player.transform.localPosition = Vector3.zero;
-        player.transform.localRotation = Quaternion.identity;
-        GetComponent<NetAnimation>().SetAnimator(player.GetComponent<Animator>());
 
     }
 }

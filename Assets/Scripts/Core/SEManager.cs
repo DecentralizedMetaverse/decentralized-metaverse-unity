@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using TC;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 [RequireComponent(typeof(AudioSource))]
-public class SEManager : MonoBehaviour, GM_Msg
+public class SEManager : MonoBehaviour
 {
     [SerializeField] DB_Settings db;
 
@@ -15,13 +16,8 @@ public class SEManager : MonoBehaviour, GM_Msg
     void Start()
     {
         source = GetComponent<AudioSource>();
-        GM.Add("se", this);
-    }
-
-    void GM_Msg.Receive(string data1, params object[] data2)
-    {
-        Play(data2[0].ToString());
-    }
+        GM.Add<string>("PlaySE", Play);
+    }    
 
     public void Play(string seName)
     {
