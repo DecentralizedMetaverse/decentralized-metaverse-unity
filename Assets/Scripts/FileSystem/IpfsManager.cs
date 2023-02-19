@@ -12,30 +12,36 @@ public class IpfsManager : MonoBehaviour
 {
     void Start()
     {
-        GM.Add<string, string>("Download", Download);
-        GM.Add<string, bool>("Upload", Upload);
+        GM.Add<string, string, bool>("DownloadContent", Download);
+        GM.Add<string, bool>("UploadContent", Upload);
     }
 
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="cid">Content ID</param>
+    /// <param name="cid"></param>
     /// <param name="fileName"></param>
-    void Download(string cid, string fileName)
+    /// <returns>true: ê¨å˜</returns>
+    bool Download(string cid, string fileName)
     {
-        var ret = GM.Msg<string>("Exe", $"ipfs get {cid} -o {fileName}");
+        var ret = GM.Msg<string>("Exe", $"ipfs get {cid} -o {fileName}.enc");
+        
+        if (!GM.Msg("DecryptFile", $"{fileName}.enc")) return false;
+        
         GM.Log(ret);
+        return true;
     }
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="fileName"></param>
-    /// <returns></returns>
+    /// <returns>true: ê¨å˜</returns>
     bool Upload(string fileName)
     {
-        var ret = GM.Msg<string>("Exe", $"ipfs add {fileName}");
-        
+        if (!GM.Msg("EncryptFile", fileName)) return false;
+
+        var ret = GM.Msg<string>("Exe", $"ipfs add {fileName}.enc");
 
         var line = ret.Split("\n")[1];
         var info = line.Split(" ");

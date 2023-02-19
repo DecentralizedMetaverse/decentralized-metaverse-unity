@@ -471,4 +471,21 @@ public static class fg
         fs.Write(byteData, 0, byteData.Length);
         fs.Close();
     }
+
+    /// <summary>
+    /// 座標からChunk取得
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="divideSize"></param>
+    /// <returns></returns>
+    public static (int, int) GetChunk2(Vector3 pos, float divideSize)
+    {
+        int x = (int)(pos.x * divideSize);
+        int z = (int)(pos.z * divideSize);
+
+        if (pos.x < 0) x--;
+        if (pos.z < 0) z--;
+
+        return (x, z);
+    }
 }

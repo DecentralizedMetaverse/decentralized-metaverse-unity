@@ -22,6 +22,9 @@ public class DB_GameManager : ScriptableObject
     public string password;
     public bool skipSignInScreen = true;
 
+    [Header("Other")]
+    public int chunkSize = 256;
+
     //public eScene.Scene scene;
     [Header("Scene Group")]
     public eScene.Scene firstScene;

@@ -1,8 +1,10 @@
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TC;
 using UnityEngine;
+using System.Threading.Tasks;
 
 /// <summary>
 /// 
@@ -11,17 +13,23 @@ public class ConsoleCommand : MonoBehaviour
 {
     void Start()
     {
-        GM.Add<string, string, string>("Exe", Exe);
+        GM.Add<string, string, UniTask<string>>("Exe", Exe);
     }
 
-    public string Exe(string command, string args)
+    async UniTask<string> Exe(string command, string args)
     {
         var psInfo = new ProcessStartInfo();
         psInfo.FileName = command;
         psInfo.Arguments = args;
         psInfo.UseShellExecute = false;
         psInfo.RedirectStandardOutput = true;
-        var p = Process.Start(psInfo);
-        return p.StandardOutput.ReadToEnd();
+        var process = Process.Start(psInfo);
+
+        await UniTask.SwitchToThreadPool();
+        process.WaitForExit();
+        await UniTask.SwitchToMainThread();
+
+        var result = await process.StandardOutput.ReadToEndAsync().AsUniTask();
+        return result;
     }
 }
