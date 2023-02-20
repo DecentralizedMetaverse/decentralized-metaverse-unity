@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,8 +13,24 @@ public class IpfsManager : MonoBehaviour
 {
     void Start()
     {
-        GM.Add<string, string, bool>("DownloadContent", Download);
-        GM.Add<string, bool>("UploadContent", Upload);
+        GM.Add<string, UniTask<bool>>("UploadContent", Upload);
+        GM.Add<string, string, UniTask<bool>>("DownloadContent", Download);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="fileName"></param>
+    /// <returns>true: ê¨å˜</returns>
+    async UniTask<bool> Upload(string fileName)
+    {
+        var path = GetPath(fileName);
+        if (!GM.Msg<bool>("EncryptFile", path)) return false;
+        var ret = await GM.Msg<UniTask<string>>("Exe", "ipfs", $"add \"{path}.enc\"");
+
+        GM.Log($"{ret}");
+
+        return true;
     }
 
     /// <summary>
@@ -22,34 +39,21 @@ public class IpfsManager : MonoBehaviour
     /// <param name="cid"></param>
     /// <param name="fileName"></param>
     /// <returns>true: ê¨å˜</returns>
-    bool Download(string cid, string fileName)
+    async UniTask<bool> Download(string cid, string fileName)
     {
-        var ret = GM.Msg<string>("Exe", $"ipfs get {cid} -o {fileName}.enc");
+        var path = GetPath(fileName);
+        //var ret = await GM.Msg<UniTask<string>>("Exe", "ipfs", $"get {cid} -o \"{path}.enc\"");
         
-        if (!GM.Msg("DecryptFile", $"{fileName}.enc")) return false;
+        if (!GM.Msg<bool>("DecryptFile", $"{path}.enc")) return false;
         
-        GM.Log(ret);
+        //GM.Log(ret);
         return true;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="fileName"></param>
-    /// <returns>true: ê¨å˜</returns>
-    bool Upload(string fileName)
+    
+
+    string GetPath(string fileName)
     {
-        if (!GM.Msg("EncryptFile", fileName)) return false;
-
-        var ret = GM.Msg<string>("Exe", $"ipfs add {fileName}.enc");
-
-        var line = ret.Split("\n")[1];
-        var info = line.Split(" ");
-
-        if (info.Length != 3) return false;
-
-        GM.Log($"{info[1]} {info[2]}");
-
-        return true;
+        return $"{Application.dataPath}/StreamingAssets/worlds/{fileName}";
     }
 }

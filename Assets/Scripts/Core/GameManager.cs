@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         GM.db = _dbMng;
+        GM.Init();
         //DOTween.Init(); // 最初に再生したときに画面が止まらないようにここで呼び出す
 #if UNITY_EDITOR
 

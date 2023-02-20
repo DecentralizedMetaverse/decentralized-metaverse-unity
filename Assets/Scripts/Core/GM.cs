@@ -20,6 +20,14 @@ namespace TC
         static Dictionary<string, List<Delegate>> functions = new();
 
         /// <summary>
+        /// 初期化
+        /// </summary>
+        public static void Init()
+        {
+            functions.Clear();
+        }
+
+        /// <summary>
         /// 送信
         /// </summary>
         /// <param name="key">keyword</param>
@@ -58,12 +66,7 @@ namespace TC
         public static T Msg<T>(string key, params object[] args)
         {
             return (T)functions[key][0].DynamicInvoke(args);
-        }
-
-        public static void Init()
-        {
-            functions.Clear();
-        }
+        }        
 
         /// <summary>
         /// 返り値がある場合は、Msgを使用してください

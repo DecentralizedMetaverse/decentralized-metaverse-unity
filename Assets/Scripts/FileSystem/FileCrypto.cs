@@ -9,13 +9,13 @@ using UnityEngine;
 
 public class FileCrypto : MonoBehaviour
 {
-    const string password = "";
-    const string saltStr = "";
+    const string password = "ga20i4g9j90)U)#rAFW";
+    const string saltStr = "gwoigjoaw";
 
     byte[] salt;
     void Start()
     {
-        byte[] saltByte = System.Text.Encoding.UTF8.GetBytes(saltStr);
+        salt = System.Text.Encoding.UTF8.GetBytes(saltStr);
         GM.Add<string, bool>("EncryptFile", Encrypt);
         GM.Add<string, bool>("DecryptFile", Decrypt);
     }
@@ -26,22 +26,13 @@ public class FileCrypto : MonoBehaviour
     /// <param name="path"></param>
     /// <returns></returns>
     bool Encrypt(string path)
-    {
-        // ファイル名とパスワードを指定
-        string fileName = "test.txt";
-
-        // パスワードからキーとIVを生成
-        //byte[] salt = new byte[8];
-        //using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
-        //{
-        //    rng.GetBytes(salt);
-        //}
+    {        
         Rfc2898DeriveBytes keyDerive = new Rfc2898DeriveBytes(password, salt);
-        byte[] key = keyDerive.GetBytes(16);
+        byte[] key = keyDerive.GetBytes(32);
         byte[] iv = keyDerive.GetBytes(16);
 
         // ファイルの内容をバイト配列として読み込む
-        byte[] data = File.ReadAllBytes(fileName);
+        byte[] inputBytes = File.ReadAllBytes(path);
 
         // AES暗号化オブジェクトを作る
         Aes aes = Aes.Create();
@@ -56,7 +47,7 @@ public class FileCrypto : MonoBehaviour
 
             using (CryptoStream cs = new CryptoStream(ms, aes.CreateEncryptor(key, iv), CryptoStreamMode.Write))
             {
-                cs.Write(data, 0, data.Length); // データを書き込む
+                cs.Write(inputBytes, 0, inputBytes.Length); // データを書き込む
                 cs.FlushFinalBlock(); // 最終ブロックの処理
             }
 
@@ -64,7 +55,7 @@ public class FileCrypto : MonoBehaviour
         }
 
         // 暗号化されたデータを別のファイルに書き込む（拡張子は.encにする）
-        var newFileName = fileName + ".enc";
+        var newFileName = path + ".enc";
         File.WriteAllBytes(newFileName, encryptedData);
 
         return true;
@@ -77,18 +68,20 @@ public class FileCrypto : MonoBehaviour
     /// <returns></returns>
     bool Decrypt(string path)
     {
-        // 復号化したファイル名
-        string outputFile = path;
+        // 出力するファイル名
+        string outputFileName = path.Substring(0, path.LastIndexOf('.'));
 
         // ファイルをバイト配列に読み込む
         byte[] inputBytes = File.ReadAllBytes(path);
-
 
 
         // パスワードから鍵と初期化ベクトルを生成する
         Rfc2898DeriveBytes deriveBytes = new Rfc2898DeriveBytes(password, salt);
         byte[] key = deriveBytes.GetBytes(32); // 鍵長256ビット
         byte[] iv = deriveBytes.GetBytes(16);  // ブロックサイズ128ビット
+
+        //// AES暗号化オブジェクトを作る
+        //Aes aes = Aes.Create();
 
         // AES暗号化オブジェクトの作成
         RijndaelManaged aes = new RijndaelManaged();
@@ -101,21 +94,20 @@ public class FileCrypto : MonoBehaviour
         {
             using (MemoryStream ms = new MemoryStream())
             {
-                using (CryptoStream cs =
-                    new CryptoStream(ms, aes.CreateDecryptor(key, iv), CryptoStreamMode.Write))
+                using (CryptoStream cs = new CryptoStream(ms, aes.CreateDecryptor(key, iv), CryptoStreamMode.Write))
                 {
                     cs.Write(inputBytes, 0, inputBytes.Length);
                 }
                 byte[] outputBytes = ms.ToArray();
 
-                File.WriteAllBytes(outputFile, outputBytes);
+                File.WriteAllBytes(outputFileName, outputBytes);
             }
-            Console.WriteLine("復号化しました。");
+            GM.Log("復号化しました。");
             return true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine("エラー: {0}", ex.Message);
+            GM.Log($"エラー: {ex.Message}");
             return false;
         }
     }
