@@ -71,44 +71,39 @@ public class FileCrypto : MonoBehaviour
         // 出力するファイル名
         string outputFileName = path.Substring(0, path.LastIndexOf('.'));
 
-        // ファイルをバイト配列に読み込む
-        byte[] inputBytes = File.ReadAllBytes(path);
+        // 暗号化されたファイルからソルトとデータを読み込む
+        byte[] encryptedData = File.ReadAllBytes(path);
+        Array.Copy(encryptedData, 0, salt, 0, salt.Length);
+        byte[] data = new byte[encryptedData.Length - salt.Length];
+        Array.Copy(encryptedData, salt.Length, data, 0, data.Length);
 
+        // パスワードとソルトからRfc2898DeriveBytesオブジェクトを作る
+        Rfc2898DeriveBytes keyDerive = new Rfc2898DeriveBytes(password, salt);
+        byte[] key = keyDerive.GetBytes(32);
+        byte[] iv = keyDerive.GetBytes(16);
 
-        // パスワードから鍵と初期化ベクトルを生成する
-        Rfc2898DeriveBytes deriveBytes = new Rfc2898DeriveBytes(password, salt);
-        byte[] key = deriveBytes.GetBytes(32); // 鍵長256ビット
-        byte[] iv = deriveBytes.GetBytes(16);  // ブロックサイズ128ビット
+        // Aesオブジェクトを作る
+        Aes aes = Aes.Create();
 
-        //// AES暗号化オブジェクトを作る
-        //Aes aes = Aes.Create();
+        // 復号化されたデータを格納するバイト配列を作る
+        byte[] decryptedData;
 
-        // AES暗号化オブジェクトの作成
-        RijndaelManaged aes = new RijndaelManaged();
-        aes.KeySize = 256;     // 鍵長256ビット
-        aes.BlockSize = 128;   // ブロックサイズ128ビット
-        aes.Mode = CipherMode.CBC;   // CBCモード
-        aes.Padding = PaddingMode.PKCS7;  // パディング
-
-        try
+        // 復号化ストリームを作る
+        using (MemoryStream ms = new MemoryStream())
         {
-            using (MemoryStream ms = new MemoryStream())
+            using (CryptoStream cs = new CryptoStream(ms,
+                aes.CreateDecryptor(key, iv), CryptoStreamMode.Write))
             {
-                using (CryptoStream cs = new CryptoStream(ms, aes.CreateDecryptor(key, iv), CryptoStreamMode.Write))
-                {
-                    cs.Write(inputBytes, 0, inputBytes.Length);
-                }
-                byte[] outputBytes = ms.ToArray();
-
-                File.WriteAllBytes(outputFileName, outputBytes);
+                cs.Write(data, 0, data.Length); // データを書き込む
+                cs.FlushFinalBlock(); // 最終ブロックの処理
             }
-            GM.Log("復号化しました。");
-            return true;
+
+            decryptedData = ms.ToArray(); // 復号化されたデータを取得する
         }
-        catch (Exception ex)
-        {
-            GM.Log($"エラー: {ex.Message}");
-            return false;
-        }
+
+        // 復号化されたデータを別のファイルに書き込む
+        File.WriteAllBytes(outputFileName, decryptedData);
+
+        return true;
     }
 }

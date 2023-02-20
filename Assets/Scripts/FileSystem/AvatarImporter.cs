@@ -16,7 +16,7 @@ public class AvatarImporter : MonoBehaviour
     string avatarPath;
     
     void Start()
-    {
+    {        
         GM.Add<string, bool, uint>("LoadAvatar", LoadAvatar);// id‚ª0‚Ìê‡‚Í©g‚ğƒ[ƒh‚·‚é
         avatarPath = $"{Application.dataPath}/../Avatar";
     }
