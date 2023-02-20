@@ -9,27 +9,26 @@ public class UI_ShowCloseAnim : UI_ShowClose
     Animator anim;
     readonly int animActive = Animator.StringToHash("active");
 
-    protected override void Awake()
+    void Start()
     {
         anim = GetComponent<Animator>();
-        base.Awake();
     }
 
-    public async override UniTask Show()
+    public override void Show()
     {
         StartShow();
-        
+
         anim.SetBool(animActive, true);
-        
+
         EndShow();
     }
 
-    public async override UniTask Close()
+    public override void Close()
     {
         StartClose();
 
         anim.SetBool(animActive, true);
-        
+
         EndClose();
     }
 }

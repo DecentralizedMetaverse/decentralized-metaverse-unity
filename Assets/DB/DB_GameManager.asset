@@ -20,6 +20,8 @@ MonoBehaviour:
   password: 
   skipSignInScreen: 1
   chunkSize: 256
+  metaPath: StreamingAssets/meta
+  contentPath: StreamingAssets/content
   firstScene: 1
   data:
   - groupName: Manager
@@ -28,6 +30,7 @@ MonoBehaviour:
     - {fileID: 102900000, guid: 4539e8104ed1dd64a969f9b562c38490, type: 3}
     sceneName:
     - Manager
+    - UI
   - groupName: Main
     scene:
     - {fileID: 102900000, guid: 457cfb6c16ba7784ebf48c8466b1b1fd, type: 3}

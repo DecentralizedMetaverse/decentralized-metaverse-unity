@@ -24,6 +24,8 @@ public class DB_GameManager : ScriptableObject
 
     [Header("Other")]
     public int chunkSize = 256;
+    public string metaPath = "StreamingAssets/meta";
+    public string contentPath = "StreamingAssets/content";
 
     //public eScene.Scene scene;
     [Header("Scene Group")]

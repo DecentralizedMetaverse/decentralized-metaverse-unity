@@ -1,15 +1,13 @@
-using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TC;
 using UnityEngine;
 
 [RequireComponent(typeof(CanvasGroup))]
 public abstract class UI_ShowClose : MonoBehaviour
 {
-    [System.NonSerialized] public CanvasGroup group;
     [SerializeField] protected bool _active;
-
     public bool active
     {
         get
@@ -18,10 +16,12 @@ public abstract class UI_ShowClose : MonoBehaviour
         }
         set
         {
-            if (value) Show().Forget();
-            else Close().Forget();
+            if (value) Show();
+            else Close();
         }
     }
+
+    [System.NonSerialized] public CanvasGroup group;
 
     public delegate void OnCompleteDelegate();
     public delegate void OnComplete(bool a);
@@ -31,8 +31,16 @@ public abstract class UI_ShowClose : MonoBehaviour
     public OnCompleteDelegate OnShow, OnClose;
     public OnComplete Finished;
 
-    public abstract UniTask Show();
-    public abstract UniTask Close();
+    public abstract void Show();
+    public abstract void Close();
+
+    void Awake()
+    {
+        group = GetComponent<CanvasGroup>();
+
+        //èâä˙âªÅ@alphaÇÃê›íË
+        SetInit(_active);
+    }
 
     protected void StartShow()
     {
@@ -56,14 +64,6 @@ public abstract class UI_ShowClose : MonoBehaviour
     protected void EndClose()
     {
         Finished?.Invoke(false);
-    }
-
-    protected virtual void Awake()
-    {
-        if (group == null) group = GetComponent<CanvasGroup>();
-
-        //èâä˙âªÅ@alphaÇÃê›íË
-        SetInit(_active);
     }
 
     /// <summary>

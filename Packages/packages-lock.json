@@ -7,6 +7,15 @@
       "dependencies": {},
       "hash": "73d86259ce31ce7f4dfe1d028ea1c3edf96c23e4"
     },
+    "com.manakhovn.figma_to_unity_importer": {
+      "version": "https://github.com/ManakhovN/FigmaToUnityImporter.git?path=/Assets/FigmaImporter",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.textmeshpro": "2.1.4"
+      },
+      "hash": "97a885394c964cb3c12746cf70aa024b96d45dbd"
+    },
     "com.unity.addressables": {
       "version": "1.19.19",
       "depth": 0,

@@ -30,7 +30,7 @@ public class UI_Loading : MonoBehaviour
     /// <returns></returns>
     async UniTask ShowLoading()
     {
-        await ui.Show();
+        await ui.ShowAsync();
     }
 
     /// <summary>
@@ -38,6 +38,6 @@ public class UI_Loading : MonoBehaviour
     /// </summary>
     void CloseLoading()
     {
-        ui.Close().Forget();
+        ui.Close();
     }
 }

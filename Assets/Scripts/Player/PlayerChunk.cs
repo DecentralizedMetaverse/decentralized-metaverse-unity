@@ -16,6 +16,7 @@ public class PlayerChunk : MonoBehaviour
 
     void Start()
     {
+        dbPlayer.transform = transform;
         divideChunkSize = 1.0f / GM.db.chunkSize;
         CheckChunk().Forget();
     }

@@ -1,43 +1,38 @@
 ﻿using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class UI_ShowCloseFade : UI_ShowClose
 {
-    public float speed = 60;
+    public float timeSec = 0;
 
-    protected override void Awake()
+    void Awake()
     {
-        if ( group == null) group = GetComponent<CanvasGroup>();
-        base.Awake();
-    }   
+        group = GetComponent<CanvasGroup>();
 
-    public async override UniTask Show()
-    {
-        StartShow();
-        
-        while (group.alpha < 1)
-        {
-            if (!active) return;
-            group.alpha += speed * Time.unscaledDeltaTime;
-            await UniTask.Yield();
-        }
-        group.alpha = 1;
-        EndShow();
+        //初期化　alphaの設定
+        SetInit(_active);
     }
 
-    public async override UniTask Close()
+    public override void Show()
+    {
+        StartShow();
+        group.DOFade(1.0f, timeSec).OnComplete(() => EndShow());
+    }
+
+    public override void Close()
     {
         StartClose();
+        group.DOFade(0, timeSec).OnComplete(() => EndClose());
+    }
 
-        while (group.alpha > 0)
-        {
-            if (active) return;
-            group.alpha -= speed * Time.unscaledDeltaTime;
-            await UniTask.Yield();
-        }
-        group.alpha = 0;
-        EndClose();
+    public async UniTask ShowAsync()
+    {
+        StartShow();
+        await group.DOFade(1.0f, timeSec);
+        EndShow();
     }
 }

@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class DB_Player : ScriptableObject
 {
+    public Transform transform;
     public int chunkX;
     public int chunkY;
 }

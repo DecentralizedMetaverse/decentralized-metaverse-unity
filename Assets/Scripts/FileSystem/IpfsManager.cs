@@ -13,7 +13,7 @@ public class IpfsManager : MonoBehaviour
 {
     void Start()
     {
-        GM.Add<string, UniTask<bool>>("UploadContent", Upload);
+        GM.Add<string, UniTask<string>>("UploadContent", Upload);
         GM.Add<string, string, UniTask<bool>>("DownloadContent", Download);
     }
 
@@ -22,15 +22,16 @@ public class IpfsManager : MonoBehaviour
     /// </summary>
     /// <param name="fileName"></param>
     /// <returns>true: ê¨å˜</returns>
-    async UniTask<bool> Upload(string fileName)
+    async UniTask<string> Upload(string fileName)
     {
         var path = GetPath(fileName);
-        if (!GM.Msg<bool>("EncryptFile", path)) return false;
+        if (!GM.Msg<bool>("EncryptFile", path)) return "";
         var ret = await GM.Msg<UniTask<string>>("Exe", "ipfs", $"add \"{path}.enc\"");
 
         GM.Log($"{ret}");
+        var words = ret.Split(' ');
 
-        return true;
+        return words[1];
     }
 
     /// <summary>
@@ -42,7 +43,7 @@ public class IpfsManager : MonoBehaviour
     async UniTask<bool> Download(string cid, string fileName)
     {
         var path = GetPath(fileName);
-        //var ret = await GM.Msg<UniTask<string>>("Exe", "ipfs", $"get {cid} -o \"{path}.enc\"");
+        var ret = await GM.Msg<UniTask<string>>("Exe", "ipfs", $"get {cid} -o \"{path}.enc\"");
         
         if (!GM.Msg<bool>("DecryptFile", $"{path}.enc")) return false;
         
@@ -54,6 +55,6 @@ public class IpfsManager : MonoBehaviour
 
     string GetPath(string fileName)
     {
-        return $"{Application.dataPath}/StreamingAssets/worlds/{fileName}";
+        return $"{Application.dataPath}/{GM.db.metaPath}/{fileName}";
     }
 }
